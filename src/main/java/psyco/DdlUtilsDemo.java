@@ -68,10 +68,55 @@ public class DdlUtilsDemo {
                     System.out.println(t);
 //                    System.out.println(Lists.newArrayList((t.getColumns())));
                     Lists.newArrayList(t.getColumns()).forEach(c -> {
-                        System.out.printf("%s  ,   %s\n" , c.getName(),c.getType());
+                        System.out.printf("%s  , %s , %s ,  %s\n", c.getName(), c.getType(), c.getTypeCode(), c.getJavaName());
                     });
                 }
         );
+    }
+
+    @Test
+    public void testJDbc() throws Exception {
+        JDBCInfo re = new JDBCInfo("jdbc:mysql://localhost:3306/project-pro?characterEncoding=UTF-8", "root", "");
+        re.init();
+        re.getTablesNames().forEach(e -> {
+            try {
+                re.getTable(e);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+        System.out.println(re.getTablesNames());
+        re.close();
+        String s = "VARCHAR\tjava.lang.String\tsetString\tupdateString\n" +
+                "CHAR\tjava.lang.String\tsetString\tupdateString\n" +
+                "LONGVARCHAR\tjava.lang.String\tsetString\tupdateString\n" +
+                "BIT\tboolean\tsetBoolean\tupdateBoolean\n" +
+                "NUMERIC\tjava.math.BigDecimal\tsetBigDecimal\tupdateBigDecimal\n" +
+                "TINYINT\tbyte\tsetByte\tupdateByte\n" +
+                "SMALLINT\tshort\tsetShort\tupdateShort\n" +
+                "INTEGER\tint\tsetInt\tupdateInt\n" +
+                "BIGINT\tlong\tsetLong\tupdateLong\n" +
+                "REAL\tfloat\tsetFloat\tupdateFloat\n" +
+                "FLOAT\tfloat\tsetFloat\tupdateFloat\n" +
+                "DOUBLE\tdouble\tsetDouble\tupdateDouble\n" +
+                "VARBINARY\tbyte[]\tsetBytes\tupdateBytes\n" +
+                "BINARY\tbyte[]\tsetBytes\tupdateBytes\n" +
+                "DATE\tjava.sql.Date\tsetDate\tupdateDate\n" +
+                "TIME\tjava.sql.Time\tsetTime\tupdateTime\n" +
+                "TIMESTAMP\tjava.sql.Timestamp\tsetTimestamp\tupdateTimestamp\n" +
+                "CLOB\tjava.sql.Clob\tsetClob\tupdateClob\n" +
+                "BLOB\tjava.sql.Blob\tsetBlob\tupdateBlob\n" +
+                "ARRAY\tjava.sql.Array\tsetARRAY\tupdateARRAY\n" +
+                "REF\tjava.sql.Ref\tSetRef\tupdateRef\n" +
+                "STRUCT\tjava.sql.Struct\tSetStruct\tupdateStruct";
+        String[] ss = s.split("\\s+");
+//        for (int i = 0; i < ss.length / 4; i++) {
+//            System.out.printf("MAP_JAVA_CLASS.put(\"%s\",%s.class);\n", ss[i * 4], ss[i * 4 + 1]);
+//        }
+        for (int i = 0; i < ss.length / 4; i++) {
+            System.out.printf("\"%s\"->\"%s\",\n", ss[i * 4], ss[i * 4 + 1]);
+//            System.out.printf("\"%s\"->%s.class.getSimpleName()\n", ss[i * 4], ss[i * 4 + 1]);
+        }
     }
 
 }
