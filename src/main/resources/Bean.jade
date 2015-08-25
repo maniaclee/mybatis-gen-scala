@@ -1,6 +1,10 @@
--@ val table:org.apache.ddlutils.model.Table
-public class #{table.getName} implements Serializable {
+-@ val package:String
+-@ val table:psyco.db.TableInfo
+package #{package};
+public class #{table.className} implements Serializable {
 
--for(col <- #{t.getColumns()})
-    private
+-for(col <- #{table.columns}){
+    private #{col.javaType} #{col.fieldName};
+-}
+
 }

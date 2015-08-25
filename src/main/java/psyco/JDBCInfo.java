@@ -66,6 +66,7 @@ public class JDBCInfo {
         return getTablesNames().stream().collect(Collectors.toMap((String t) -> t, (String e) -> getTable(e)));
     }
 
+    @Deprecated
     public void close() {
         if (connection != null) {
             try {
