@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -53,9 +54,11 @@ public class JDBCInfo {
     public List<List<String>> getTable(String table) {
         List<List<String>> re = Lists.newLinkedList();
         try {
+            ResultSet primaryKeys = databaseMetaData.getPrimaryKeys(null, null, table);
+            String pk = primaryKeys.next() ? primaryKeys.getString("COLUMN_NAME") : null;
             ResultSet resultSet = databaseMetaData.getColumns(null, null, table, null);
             while (resultSet.next())
-                re.add(Lists.newArrayList(resultSet.getString("COLUMN_NAME"), resultSet.getString("TYPE_NAME"), resultSet.getInt("COLUMN_SIZE") + ""));
+                re.add(Lists.newArrayList(resultSet.getString("COLUMN_NAME"), resultSet.getString("TYPE_NAME"), resultSet.getInt("COLUMN_SIZE") + "", String.valueOf(Objects.equals(pk, resultSet.getString("COLUMN_NAME")))));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

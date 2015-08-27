@@ -4,7 +4,7 @@ import java.io.{File, PrintWriter}
 
 import org.fusesource.scalate._
 import psyco.JDBCInfo
-import psyco.db.TableBuilder
+import psyco.db.{TableInfo, TableBuilder}
 
 import scala.io.Source
 
@@ -16,7 +16,12 @@ trait Engine {
   val engine = new TemplateEngine(List(new File("")), "production")
   val jdbc: JDBCInfo = new JDBCInfo("jdbc:mysql://localhost:3306/project-pro?characterEncoding=UTF-8", "root", "")
   val tables = TableBuilder.fromJDBCInfo(jdbc)
-  val packageName = "psyco.fuck.you"
+  val packageBase = "psyco.fuck.you"
+  val packageMapper = packageBase.concat(".mapper")
+  val packageBean = packageBase.concat(".bean")
+
+  def getMapperClassPath(className: String) = s"${packageMapper}.${className}"
+  def getBeanClassPath(className: String) = s"${packageBean}.${className}"
 }
 
 trait FileWorker {
@@ -38,19 +43,36 @@ object GenEngine extends Engine with FileWorker {
 
   def gen(): Unit = {
     tables.foreach(t => {
-      val output = engine.layout("Bean.jade", Map(
-        "table" -> t,
-        "package" -> packageName)
-      )
       println("--------------------")
-      println(output)
+      //      println(bean(t, packageName.concat(".model")))
+      //      println(mapper(t, packageName.concat(".mapper")))
+      println(mapperXml(t))
     })
   }
 
+  def mapper(table: TableInfo): String =
+    engine.layout("MapperInterface.ssp", Map(
+      "table" -> table,
+      "packageName" -> packageMapper
+    ))
+
+  def bean(table: TableInfo): String =
+    engine.layout("Bean.ssp", Map(
+      "table" -> table,
+      "packageName" -> packageBean
+    ))
+
+  def mapperXml(table: TableInfo) =
+    engine.layout("MapperXML.ssp", Map(
+      "table" -> table,
+      "mapperClass" -> getMapperClassPath(table.className),
+      "beanClass" -> getBeanClassPath(table.className),
+      "mapperClass" -> getMapperClassPath(table.className)
+    ))
 }
 
 object Main extends App {
-    GenEngine.gen()
-//    GenEngine.readFile("/Users/psyco/antxXXXXX.properties")
-//  GenEngine.writeFile(new File("/Users/psyco/tmp/fucker.txt"), "fuck you !")
+  GenEngine.gen()
+  //    GenEngine.readFile("/Users/psyco/antxXXXXX.properties")
+  //  GenEngine.writeFile(new File("/Users/psyco/tmp/fucker.txt"), "fuck you !")
 }

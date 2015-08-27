@@ -1,0 +1,22 @@
+#{
+    import psyco.util.CaseUtil
+}#
+<%@ var packageName:String %>
+<%@ var table:psyco.db.TableInfo %>
+package ${packageName};
+public class ${table.className} implements Serializable {
+
+#for(col <- table.columns)
+    private ${col.javaType} ${col.fieldName};
+#end
+
+#for(col <- table.columns)
+    public ${col.javaType} get${col.fieldName}(){
+        return ${col.fieldName};
+    }
+    public void set${CaseUtil.camelUpper(col.fieldName)}(${col.javaType} ${col.fieldName}){
+        this.${col.fieldName}=${col.fieldName};
+    }
+#end
+
+}

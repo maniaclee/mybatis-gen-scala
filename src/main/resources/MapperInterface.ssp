@@ -1,0 +1,25 @@
+<%@ var packageName:String %>
+<%@ var table:psyco.db.TableInfo %>
+#{
+    import psyco.util.CaseUtil
+    var classNameLower:String = CaseUtil.camelLower(table.className)
+    var pkType=table.getPrimaryKey().get.javaType
+}#
+package ${packageName};
+
+import java.util.List;
+import java.util.Map;
+
+    public interface ${table.className}Mapper{
+
+    public ${table.className} getById(${pkType} id);
+
+    public List<${table.className}> getByIds(@Param("ids") List<${pkType}> ids);
+
+    public void insert(${table.className} ${classNameLower} );
+
+    public void update(${table.className} ${classNameLower});
+
+    public void delete(${pkType} id);
+
+}

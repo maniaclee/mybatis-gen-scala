@@ -1,0 +1,75 @@
+<%@ var table:psyco.db.TableInfo %>
+<%@ var mapperClass:String %>
+<%@ var beanClass:String %>
+#{
+    import psyco.util.CaseUtil
+    var classNameLower:String = CaseUtil.camelLower(table.className)
+    var pk_db:String = table.getPrimaryKey().get.columnName
+    var pk_field:String = table.getPrimaryKey().get.fieldName
+    var pkType:String=table.getPrimaryKey().get.javaType
+    var resultMap:String = table.className.concat("Result")
+}#
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${mapperClass}">
+    <resultMap id="resultMap" type="${beanClass}">
+        #for(col <- table.columns)
+        <result column="${col.columnName}" property="${col.fieldName}"/>
+        #end
+    </resultMap>
+
+    <sql id="selectAllColumns">
+        ${table.columns.map(_.columnName).mkString(",")}
+    </sql>
+
+    <sql id="setAllColumns">
+        <set>
+        #for(col <- table.columns)
+            <if test="${col.columnName} #!= null">  ${col.columnName} = #{${col.fieldName}},</if>
+        #end
+        </set>
+    </sql>
+
+    <select id="getById" resultMap="resultMap">
+        select
+        <include refid="selectAllColumns"/>
+        from ${table.name}
+        where ${pk_db} = #{${pk_field}}
+    </select>
+    <select id="getByIds" resultMap="resultMap">
+        select
+        <include refid="selectAllColumns"/>
+        from ${table.className}
+        <where>
+            <if test="ids != null">
+                and ${pk_db} in
+                <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by ${pk_db} desc
+    </select>
+
+    <update id="updateConsultOrder" parameterType="com.pajk.trademanage.dal.model.ConsultOrder">
+        update
+        ${table.className}
+        <include refid="setAllColumns"/>
+        where
+        ${pk_db} = #{${pk_field}}
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="${pk_field}" parameterType="${beanClass}">
+        insert into ${table.name}
+        <include refid="setAllColumns"/>
+    </insert>
+
+    <delete id="delete">
+        delete
+        from
+        ${table.className}
+        where
+        ${pk_db} = #{${pk_field}}
+    </delete>
+</mapper>

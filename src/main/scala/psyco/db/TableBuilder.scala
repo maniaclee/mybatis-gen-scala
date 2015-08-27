@@ -1,6 +1,7 @@
 package psyco.db
 
 import psyco.JDBCInfo
+import psyco.util.CaseUtil
 
 import scala.collection.JavaConversions._
 
@@ -50,10 +51,12 @@ object TableBuilder {
       new TableInfo(en._1, en._1,
         en._2.map(col => {
           val columnName = col.get(0)
+          val fieldName = CaseUtil.underscore2camel(columnName)
           val columnType = col.get(1)
           val columnJavaType = getJavaType(columnType)
           val columnSize = col.get(2).toInt
-          new ColumnInfo(columnName, columnName, columnType, columnJavaType, columnSize)
+          val isPrimaryKey = col.get(3).toBoolean
+          new ColumnInfo(columnName, fieldName, columnType, columnJavaType, columnSize, isPrimaryKey)
         }).toList))
       .toList
   }

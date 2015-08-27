@@ -1,10 +1,8 @@
--@ val package:String
--@ val table:psyco.db.TableInfo
-package #{package};
+-@ var packageName:String
+-@ var table:psyco.db.TableInfo
+package #{packageName};
 public class #{table.className} implements Serializable {
 
--for(col <- #{table.columns}){
-    private #{col.javaType} #{col.fieldName};
--}
-
+-for(col <- table.columns)
+private #{col.javaType} #{col.fieldName};
 }
