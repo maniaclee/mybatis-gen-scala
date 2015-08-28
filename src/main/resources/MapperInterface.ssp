@@ -10,7 +10,7 @@ package ${packageName};
 import java.util.List;
 import java.util.Map;
 
-    public interface ${table.className}Mapper{
+public interface ${table.className}Mapper{
 
     public ${table.className} getById(${pkType} id);
 

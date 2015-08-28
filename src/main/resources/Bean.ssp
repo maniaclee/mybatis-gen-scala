@@ -4,6 +4,10 @@
 <%@ var packageName:String %>
 <%@ var table:psyco.gen.db.TableInfo %>
 package ${packageName};
+
+import java.io.Serializable;
+import java.util.Date;
+
 public class ${table.className} implements Serializable {
 
 #for(col <- table.columns)

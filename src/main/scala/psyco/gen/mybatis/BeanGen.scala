@@ -7,7 +7,6 @@ import psyco.JDBCInfo
 import psyco.gen.db.{TableBuilder, TableInfo}
 import psyco.util.FileTrait
 
-import scala.io.Source
 
 /**
  * Created by lipeng on 15/8/24.
@@ -25,10 +24,14 @@ trait Engine {
   val dirBase: File = new File(config.srcRootDirectory, packageBase.replace(".", "/"))
   val dirMapperInterface: File = new File(dirBase, "mapper")
   val dirMapperBean: File = new File(dirBase, "bean")
+  val dirMapperXml: File = new File(dirBase, "xml")
 
   /** init */
   if (!dirBase.mkdirs())
     throw new RuntimeException(s"Existed directory:${dirBase.getAbsolutePath}")
+  dirMapperInterface.mkdir()
+  dirMapperBean.mkdir()
+  dirMapperXml.mkdir()
 
   def getMapperClassPath(className: String) = s"${packageMapper}.${className}"
 
@@ -38,10 +41,30 @@ trait Engine {
 object GenEngine extends Engine with FileTrait {
 
   def gen(): Unit = {
+    def writeFileWithLog(f: File, s: String) = {
+      println(s)
+      writeFile(f, s)
+    }
     tables.foreach(t => {
-      println("--------------------")
-      println(mapperXml(t))
+      println(s"[Table]:\t${t.name}--------------------")
+      writeFileWithLog(new File(dirMapperBean, t.className.concat(".java")), bean(t))
+      writeFileWithLog(new File(dirMapperInterface, t.className.concat("Mapper.java")), mapper(t))
+      writeFileWithLog(new File(dirMapperXml, t.className.concat("Mapper.xml")), mapperXml(t))
     })
+  }
+
+  def test(): Unit = {
+    def writeFileWithLog(f: File, s: String) = {
+      println(s)
+      //      writeFile(f, s)
+    }
+    println(tables)
+//    tables.foreach(t => {
+//      println(s"[Table]:\t${t.name}--------------------")
+//      //      writeFileWithLog(new File(dirMapperBean, t.className.concat(".java")), bean(t))
+//      //      writeFileWithLog(new File(dirMapperInterface, t.className.concat("Mapper.java")), mapper(t))
+//      //      writeFileWithLog(new File(dirMapperXml, t.className.concat("Mapper.xml")), mapperXml(t))
+//    })
   }
 
   def mapper(table: TableInfo): String =
@@ -66,7 +89,7 @@ object GenEngine extends Engine with FileTrait {
 }
 
 object Main extends App {
-  GenEngine.gen()
+  GenEngine.test()
   //    GenEngine.readFile("/Users/psyco/antxXXXXX.properties")
   //  GenEngine.writeFile(new File("/Users/psyco/tmp/fucker.txt"), "fuck you !")
 }

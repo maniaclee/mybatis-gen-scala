@@ -48,7 +48,7 @@ object TableBuilder {
   def fromJDBCInfo(jdbc: JDBCInfo): List[TableInfo] = {
     jdbc.init()
     jdbc.getTables.map(en =>
-      new TableInfo(en._1, en._1,
+      new TableInfo(en._1, CaseUtil.underscore2camelUppercase(en._1),
         en._2.map(col => {
           val columnName = col.get(0)
           val fieldName = CaseUtil.underscore2camel(columnName)
