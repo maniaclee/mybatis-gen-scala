@@ -1,5 +1,5 @@
 <%@ var packageName:String %>
-<%@ var table:psyco.db.TableInfo %>
+<%@ var table:psyco.gen.db.TableInfo %>
 #{
     import psyco.util.CaseUtil
     var classNameLower:String = CaseUtil.camelLower(table.className)

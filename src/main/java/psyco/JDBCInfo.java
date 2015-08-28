@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 public class JDBCInfo {
 
 
-    private String DB_URL = "jdbc:mysql://localhost:3306/project-pro?characterEncoding=UTF-8";
-    private String DB_USER = "root";
-    private String DB_PASSWORD = "";
+    private String DB_URL;
+    private String DB_USER;
+    private String DB_PASSWORD;
     public Connection connection;
     public DatabaseMetaData databaseMetaData;
 
@@ -57,8 +57,17 @@ public class JDBCInfo {
             ResultSet primaryKeys = databaseMetaData.getPrimaryKeys(null, null, table);
             String pk = primaryKeys.next() ? primaryKeys.getString("COLUMN_NAME") : null;
             ResultSet resultSet = databaseMetaData.getColumns(null, null, table, null);
-            while (resultSet.next())
-                re.add(Lists.newArrayList(resultSet.getString("COLUMN_NAME"), resultSet.getString("TYPE_NAME"), resultSet.getInt("COLUMN_SIZE") + "", String.valueOf(Objects.equals(pk, resultSet.getString("COLUMN_NAME")))));
+            while (resultSet.next()) {
+                re.add(Lists.newArrayList(
+                        resultSet.getString("COLUMN_NAME"),
+                        resultSet.getString("TYPE_NAME"),
+                        String.valueOf(resultSet.getInt("COLUMN_SIZE")),
+                        String.valueOf(Objects.equals(pk, resultSet.getString("COLUMN_NAME"))),
+                        /*not used*/
+                        String.valueOf(resultSet.getInt("NULLABLE")),
+                        resultSet.getString("TABLE_SCHEM")
+                ));
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

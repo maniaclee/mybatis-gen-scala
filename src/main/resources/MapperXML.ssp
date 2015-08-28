@@ -1,4 +1,4 @@
-<%@ var table:psyco.db.TableInfo %>
+<%@ var table:psyco.gen.db.TableInfo %>
 <%@ var mapperClass:String %>
 <%@ var beanClass:String %>
 #{

@@ -2,7 +2,7 @@
     import psyco.util.CaseUtil
 }#
 <%@ var packageName:String %>
-<%@ var table:psyco.db.TableInfo %>
+<%@ var table:psyco.gen.db.TableInfo %>
 package ${packageName};
 public class ${table.className} implements Serializable {
 

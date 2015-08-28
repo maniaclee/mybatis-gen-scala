@@ -15,6 +15,7 @@ import java.util.Properties;
 /**
  * Created by lipeng on 15/8/22.
  */
+@Deprecated
 public class DdlUtilsDemo {
     public static Database database;
 
@@ -78,14 +79,7 @@ public class DdlUtilsDemo {
     public void testJDbc() throws Exception {
         JDBCInfo re = new JDBCInfo("jdbc:mysql://localhost:3306/project-pro?characterEncoding=UTF-8", "root", "");
         re.init();
-        re.getTablesNames().forEach(e -> {
-            try {
-                re.getTable(e);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        });
-        System.out.println(re.getTablesNames());
+        System.out.println(re.getTables());
         re.close();
         String s = "VARCHAR\tjava.lang.String\tsetString\tupdateString\n" +
                 "CHAR\tjava.lang.String\tsetString\tupdateString\n" +
@@ -109,14 +103,14 @@ public class DdlUtilsDemo {
                 "ARRAY\tjava.sql.Array\tsetARRAY\tupdateARRAY\n" +
                 "REF\tjava.sql.Ref\tSetRef\tupdateRef\n" +
                 "STRUCT\tjava.sql.Struct\tSetStruct\tupdateStruct";
-        String[] ss = s.split("\\s+");
+//        String[] ss = s.split("\\s+");
+////        for (int i = 0; i < ss.length / 4; i++) {
+////            System.out.printf("MAP_JAVA_CLASS.put(\"%s\",%s.class);\n", ss[i * 4], ss[i * 4 + 1]);
+////        }
 //        for (int i = 0; i < ss.length / 4; i++) {
-//            System.out.printf("MAP_JAVA_CLASS.put(\"%s\",%s.class);\n", ss[i * 4], ss[i * 4 + 1]);
+//            System.out.printf("\"%s\"->\"%s\",\n", ss[i * 4], ss[i * 4 + 1]);
+////            System.out.printf("\"%s\"->%s.class.getSimpleName()\n", ss[i * 4], ss[i * 4 + 1]);
 //        }
-        for (int i = 0; i < ss.length / 4; i++) {
-            System.out.printf("\"%s\"->\"%s\",\n", ss[i * 4], ss[i * 4 + 1]);
-//            System.out.printf("\"%s\"->%s.class.getSimpleName()\n", ss[i * 4], ss[i * 4 + 1]);
-        }
     }
 
 }

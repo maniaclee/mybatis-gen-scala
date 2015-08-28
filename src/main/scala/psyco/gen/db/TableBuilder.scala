@@ -1,4 +1,4 @@
-package psyco.db
+package psyco.gen.db
 
 import psyco.JDBCInfo
 import psyco.util.CaseUtil

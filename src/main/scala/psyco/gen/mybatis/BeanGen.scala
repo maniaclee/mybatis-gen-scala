@@ -1,51 +1,45 @@
-package psyco.mybatis.gen
+package psyco.gen.mybatis
 
 import java.io.{File, PrintWriter}
 
 import org.fusesource.scalate._
 import psyco.JDBCInfo
-import psyco.db.{TableInfo, TableBuilder}
+import psyco.gen.db.{TableBuilder, TableInfo}
+import psyco.util.FileTrait
 
 import scala.io.Source
 
 /**
  * Created by lipeng on 15/8/24.
  */
-
 trait Engine {
+  val config = Config4mybatis.instance
   val engine = new TemplateEngine(List(new File("")), "production")
-  val jdbc: JDBCInfo = new JDBCInfo("jdbc:mysql://localhost:3306/project-pro?characterEncoding=UTF-8", "root", "")
+  val jdbc: JDBCInfo = new JDBCInfo(config.jdbc.url, config.jdbc.user, config.jdbc.password)
   val tables = TableBuilder.fromJDBCInfo(jdbc)
-  val packageBase = "psyco.fuck.you"
+  /** package */
+  val packageBase = config.packageRoot
   val packageMapper = packageBase.concat(".mapper")
   val packageBean = packageBase.concat(".bean")
+  /** directory */
+  val dirBase: File = new File(config.srcRootDirectory, packageBase.replace(".", "/"))
+  val dirMapperInterface: File = new File(dirBase, "mapper")
+  val dirMapperBean: File = new File(dirBase, "bean")
+
+  /** init */
+  if (!dirBase.mkdirs())
+    throw new RuntimeException(s"Existed directory:${dirBase.getAbsolutePath}")
 
   def getMapperClassPath(className: String) = s"${packageMapper}.${className}"
+
   def getBeanClassPath(className: String) = s"${packageBean}.${className}"
 }
 
-trait FileWorker {
-  def writeFile(file: File, content: String): Unit = {
-    if (file.exists())
-      throw new RuntimeException("Writing file failed due to existed file : " + file.getAbsolutePath)
-    val pw = new PrintWriter(file)
-    pw.write(content)
-    pw.close
-  }
-
-  def readFile(filePath: String): Unit = {
-    Source.fromFile(filePath).getLines().foreach(println)
-    //    Source.fromFile(filePath).foreach(print)
-  }
-}
-
-object GenEngine extends Engine with FileWorker {
+object GenEngine extends Engine with FileTrait {
 
   def gen(): Unit = {
     tables.foreach(t => {
       println("--------------------")
-      //      println(bean(t, packageName.concat(".model")))
-      //      println(mapper(t, packageName.concat(".mapper")))
       println(mapperXml(t))
     })
   }
