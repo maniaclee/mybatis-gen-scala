@@ -14,15 +14,15 @@ object TableBuilder {
     "VARCHAR" -> "String",
     "CHAR" -> "String",
     "LONGVARCHAR" -> "String",
-    "BIT" -> "boolean",
+    "BIT" -> "Boolean",
     "NUMERIC" -> "java.math.BigDecimal",
-    "TINYINT" -> "byte",
-    "SMALLINT" -> "short",
-    "INTEGER" -> "int",
-    "BIGINT" -> "long",
-    "REAL" -> "float",
-    "FLOAT" -> "float",
-    "DOUBLE" -> "double",
+    "TINYINT" -> "Byte",
+    "SMALLINT" -> "Short",
+    "INTEGER" -> "Int",
+    "BIGINT" -> "Long",
+    "REAL" -> "Float",
+    "FLOAT" -> "Float",
+    "DOUBLE" -> "Double",
     "VARBINARY" -> "byte[]",
     "BINARY" -> "byte[]",
     "DATE" -> "java.sql.Date",
@@ -34,11 +34,12 @@ object TableBuilder {
     "REF" -> "java.sql.Ref",
     "STRUCT" -> "java.sql.Struct",
     //extra
-    "INT" -> "int",
+    "INT" -> "Integer",
     "DATETIME" -> "Date"
   )
 
   def getJavaType(jdbcType: String): String = {
+    /** filter "INT UNSIGNED" => "INT" */
     val javaType = "^(\\S+)\\s*".r.findFirstMatchIn(jdbcType).map(_.group(1)).getOrElse(jdbcType)
     val re = map.get(javaType)
     if (re.isDefined) re.get

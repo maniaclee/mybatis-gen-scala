@@ -1,5 +1,7 @@
 <%@ var packageName:String %>
 <%@ var table:psyco.gen.db.TableInfo %>
+<%@ var beanPath:String %>
+<%@ var mapperClassName:String %>
 #{
     import psyco.util.CaseUtil
     var classNameLower:String = CaseUtil.camelLower(table.className)
@@ -8,13 +10,13 @@
 package ${packageName};
 
 import java.util.List;
-import java.util.Map;
+import ${beanPath};
 
-public interface ${table.className}Mapper{
+public interface ${mapperClassName}{
 
     public ${table.className} getById(${pkType} id);
 
-    public List<${table.className}> getByIds(@Param("ids") List<${pkType}> ids);
+    public List<${table.className}> getByIds(List<${pkType}> ids);
 
     public void insert(${table.className} ${classNameLower} );
 

@@ -24,7 +24,7 @@ trait Engine {
   val dirBase: File = new File(config.srcRootDirectory, packageBase.replace(".", "/"))
   val dirMapperInterface: File = new File(dirBase, "mapper")
   val dirMapperBean: File = new File(dirBase, "bean")
-  val dirMapperXml: File = new File(dirBase, "xml")
+  val dirMapperXml: File = config.mapperXmlDirectory.filter(!_.isEmpty).map(new File(_)).getOrElse(new File(dirBase, "xml"))
 
   /** init */
   if (!dirBase.mkdirs())
@@ -58,18 +58,20 @@ object GenEngine extends Engine with FileTrait {
       println(s)
       //      writeFile(f, s)
     }
-    println(tables)
-//    tables.foreach(t => {
-//      println(s"[Table]:\t${t.name}--------------------")
-//      //      writeFileWithLog(new File(dirMapperBean, t.className.concat(".java")), bean(t))
-//      //      writeFileWithLog(new File(dirMapperInterface, t.className.concat("Mapper.java")), mapper(t))
-//      //      writeFileWithLog(new File(dirMapperXml, t.className.concat("Mapper.xml")), mapperXml(t))
-//    })
+    tables.foreach(t => println(t.columns.map(_.fieldName)))
+    //    tables.foreach(t => {
+    //      println(s"[Table]:\t${t.name}--------------------")
+    //      //      writeFileWithLog(new File(dirMapperBean, t.className.concat(".java")), bean(t))
+    //      //      writeFileWithLog(new File(dirMapperInterface, t.className.concat("Mapper.java")), mapper(t))
+    //      //      writeFileWithLog(new File(dirMapperXml, t.className.concat("Mapper.xml")), mapperXml(t))
+    //    })
   }
 
   def mapper(table: TableInfo): String =
     engine.layout("MapperInterface.ssp", Map(
       "table" -> table,
+      "mapperClassName" -> table.className.concat("Mapper"),
+      "beanPath" -> getBeanClassPath(table.className),
       "packageName" -> packageMapper
     ))
 
@@ -89,7 +91,7 @@ object GenEngine extends Engine with FileTrait {
 }
 
 object Main extends App {
-  GenEngine.test()
+  GenEngine.gen()
   //    GenEngine.readFile("/Users/psyco/antxXXXXX.properties")
   //  GenEngine.writeFile(new File("/Users/psyco/tmp/fucker.txt"), "fuck you !")
 }

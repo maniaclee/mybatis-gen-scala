@@ -15,8 +15,8 @@ public class ${table.className} implements Serializable {
 #end
 
 #for(col <- table.columns)
-    public ${col.javaType} get${col.fieldName}(){
-        return ${col.fieldName};
+    public ${col.javaType} get${CaseUtil.camelUpper(col.fieldName)}(){
+        return this.${col.fieldName};
     }
     public void set${CaseUtil.camelUpper(col.fieldName)}(${col.javaType} ${col.fieldName}){
         this.${col.fieldName}=${col.fieldName};
